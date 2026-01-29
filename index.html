@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Кликер Mini App</title>
+  <style>
+    body { font-family: sans-serif; text-align: center; margin-top: 50px; }
+    button { font-size: 24px; padding: 20px; }
+    #counter { font-size: 32px; margin: 20px; }
+  </style>
+</head>
+<body>
+  <h1>Кликер</h1>
+  <div id="counter">0</div>
+  <button id="clickBtn">Кликни!</button>
+
+  <script>
+    let clicks = 0;
+    const counter = document.getElementById('counter');
+    const btn = document.getElementById('clickBtn');
+
+    btn.addEventListener('click', () => {
+      clicks++;
+      counter.textContent = clicks;
+
+      // При достижении 30 кликов отправляем данные боту
+      if (clicks === 30) {
+        // Mini App Telegram
+        if (window.Telegram?.WebApp) {
+          window.Telegram.WebApp.sendData(JSON.stringify({
+            action: "reward",
+            points: 20
+          }));
+        } else {
+          alert("Достигнуто 30 кликов! (Только Telegram Mini App поддерживает отправку боту)");
+        }
+      }
+    });
+  </script>
+</body>
+</html>
