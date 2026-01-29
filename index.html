@@ -14,28 +14,37 @@
   <div id="counter">0</div>
   <button id="clickBtn">Кликни!</button>
 
-  <script>
-    let clicks = 0;
-    const counter = document.getElementById('counter');
-    const btn = document.getElementById('clickBtn');
+ <script>
+let clicks = 0;
+const counter = document.getElementById('counter');
 
-    btn.addEventListener('click', () => {
-      clicks++;
-      counter.textContent = clicks;
+function trySendData() {
+  // Проверяем, существует ли объект
+  if (window.Telegram && window.Telegram.WebApp) {
+    window.Telegram.WebApp.sendData(JSON.stringify({
+      action: "reward",
+      points: 20
+    }));
+  } else {
+    console.log("Mini App не доступен");
+  }
+}
 
-      // При достижении 30 кликов отправляем данные боту
-      if (clicks === 30) {
-        // Mini App Telegram
-        if (window.Telegram?.WebApp) {
-          window.Telegram.WebApp.sendData(JSON.stringify({
-            action: "reward",
-            points: 20
-          }));
-        } else {
-          alert("Достигнуто 30 кликов! (Только Telegram Mini App поддерживает отправку боту)");
-        }
-      }
-    });
-  </script>
+document.getElementById('clickBtn').addEventListener('click', () => {
+  clicks++;
+  counter.textContent = clicks;
+
+  if (clicks === 30) {
+    // Проверяем через таймаут, если объект ещё не готов
+    if (window.Telegram?.WebApp) {
+      trySendData();
+    } else {
+      // Подождать немного и попробовать снова
+      setTimeout(trySendData, 500);
+    }
+  }
+});
+</script>
+    
 </body>
 </html>
